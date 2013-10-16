@@ -1,0 +1,50 @@
+body {
+	padding: 0; 
+	font-family: 'Oswald', sans-serif;
+	font-size: 18px;
+	color: #383838;
+	background-color: #fff;
+}
+
+h1{
+	text-align:center;
+	margin:30px auto;
+	padding: 0;
+	text-transform: uppercase;
+	font-weight: normal;
+	font-family: 'Oswald', sans-serif;
+	color: black;
+	position: relative;
+}
+
+h2 { 
+	text-align:center;
+	margin-top: -10px;
+}
+
+#header-wrapper {
+	overflow: hidden;
+	position: relative;
+	font-family: 'Oswald', sans-serif;
+	width: 1110px;
+	height: 800px;
+	margin:0px auto;
+}
+
+/* Map properties*/
+#map { 
+		width:1024px; 
+		height:720px; 
+		margin:0px auto;
+		font-family: font-family: 'Abel', sans-serif; 
+		font-size: small;
+		color: #fff;
+		border:solid 5px #000000;
+		-moz-border-radius: 0px;
+		-webkit-border-radius: 0px;
+		
+		-moz-box-shadow: 0px 10px 18px #1a181a;
+		-webkit-box-shadow: 0px 10px 18px #1a181a;
+		box-shadow: 0px 10px 18px #1a181a;
+}
+
