@@ -7,6 +7,8 @@ Flutrack.org
 Αρχικά πρέπει να εκτελεστεί το αρχείο db.php μέσω ενός browser, ώστε να δημιουργηθούν οι πίνακες με τα πεδία στη βάση δεδομένων. 
 Προϋπόθεση είναι να υπάρχει κάποιο Apache distribution που περιέχει MySQL και PHP (προτείνεται ως η πιο απλή λύση και όχι ως μοναδική).
 
+Αμέσως μετά και ενώ δεν έχει εμφανιστεί κάποιο error καλείτε το http://127.0.0.1/φακελος-εφαρμογης/db.php?secretinstall=secretpassword-που εχετε βαλειστο db.php
+
 
 Έπειτα πρέπει να εκτελεστεί το αρχείο backend.php. Για να γίνει αυτό σωστά πρέπει πρώτα να αντικατασταθούν οι αστερίσκοι στο αρχείο
 auth.php. Η αντικατάσταση πρέπει να γίνει με τα κλειδιά που παρέχει το API του Twitter (https://dev.twitter.com/docs/auth/application-only-auth). 
@@ -25,5 +27,61 @@ auth.php. Η αντικατάσταση πρέπει να γίνει με τα �
 των markers, που θα οπτικοποιούν τα tweets, ανάλογα με τις εικόνες που θα χρησιμοποιηθούν. Μπορεί ακόμα να γίνει η διαμόρφωση των παραμέτρων
 του χάρτη και ποιων χαρακτηριστικών θα εμφανίζονται (ή όχι).
 
+* Για να δουλέψει η εφαρμογή τα παρακάτω πρέπει να είναι ενεργοποιημένα και να υποστηρίζονται από τον localhost server. *
+ 
+[PHP Modules]
+apc
+bcmath
+bz2
+calendar
+Core
+ctype
+curl
+date
+dba
+dom
+ereg
+exif
+fileinfo
+filter
+ftp
+gd
+gettext
+hash
+iconv
+json
+libxml
+mbstring
+mhash
+mysql
+mysqli
+mysqlnd
+openssl
+pcntl
+pcre
+PDO
+pdo_mysql
+Phar
+posix
+readline
+Reflection
+session
+shmop
+SimpleXML
+soap
+sockets
+SPL
+standard
+suhosin
+sysvmsg
+sysvsem
+sysvshm
+tokenizer
+wddx
+xml
+xmlreader
+xmlwriter
+zip
+zlib
 
 Για οποιαδήποτε ερώτηση, προβληματισμό ή ιδέα επικοινωνήστε στο: sckarolos@yahoo.com
