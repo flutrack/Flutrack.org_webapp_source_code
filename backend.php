@@ -9,17 +9,15 @@
 
 <?php
 
+ini_set('display_errors',1);
+error_reporting(E_ALL);
+
 $api_URL = 'https://api.twitter.com/1.1/search/tweets.json';
 //NO NEED IT'S STORED TO MySQL//$API_query = 'flu+OR+chills+OR+sore+throat+OR+headache+OR+runny+nose+OR+vomiting+OR+sneazing+OR+fever+OR+diarrhea+OR+dry+cough';
 $API_parameters = '&include_entities=true&result_type=recent';
 
-//connection to the database
+//connect to the database
 require('db.php');
-
-// define the api url
-// ver 2 include entities on OAuth needless
-//
-//-> CHANGED TO CURL <
 
 /********************************
 * FETCH refresh_url stored in MySQL
@@ -32,6 +30,10 @@ $cache = '';
 
 var_dump($API_query);
 
+// Get the first refresh url, because it is the fresher, and the last is the oldest.
+
+$guard=0;
+ 
 
 /************************
 //DO-WHILE LOOP START
@@ -39,12 +41,10 @@ var_dump($API_query);
 
 do {
 
-  $ch = curl_init();
 
-  //echo "$api_URL"."$API_query"."$API_parameters";
-  //api parameters diagrafhkan giati einai sto cache url apo to twitter
 
-  echo "$api_URL"."$API_query";
+  echo "api_url:$api_URL<br />";
+  echo "api_query:$API_query<br />";
 
   //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
@@ -52,15 +52,19 @@ do {
 
   //curl_setopt($ch, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt");
 
-  $token = '*******************************************************************************************';
-  $headers = array( 
-    "Authorization: Bearer $token"
-  ); 
+  include('oauth.php');
+  $result = mysql_query("SELECT bearer_token FROM flu_engine");
+  $field = mysql_fetch_array($result);
+  $bearer = $field['bearer_token'];
   
+  $headers = array( 
+    "Authorization: Bearer $bearer"
+  ); 
+  $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, "$api_URL"."$API_query");
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ch, CURLOPT_USERAGENT, " flutrack.org Application / mailto:talviskarolos@gmail.com ");
+  curl_setopt($ch, CURLOPT_USERAGENT, " **************** / mailto:************** ");
   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
   $data = curl_exec($ch);
   $info = curl_getinfo($ch); 
@@ -68,16 +72,19 @@ do {
   curl_close($ch);
 
   //TODO
-  // To $http_code is int, so if statement --> ($http_code == 400) 
-  // we switch from JSON payload error handling to HTTP Return Headers, shouldnt fail that much
+  // $http_code is int, so IFs ($http_code == 400) 
+  // we switch from JSON payload error handling to HTTP Return Headers.
 
 
   /* TO INCLUDE
   if ($http_code == 400){
-	wrong request / limit
+  error or limit
+  }
+  else if ($http_code == 401){
+  auth problem
   }
   else if ($http_code == 403){
-	update limit
+  update limit
   }
   404
   error
@@ -86,11 +93,11 @@ do {
   420
   we are rate limited
   500
-  Twitter does not respond
+  twitter api is down
   502
-  To Twitter is under maintenance
+  Twitter is under maintenance
   503
-  Twitter does not respond
+  Twitter problem
 
   END TO INCLUDE*/
 
@@ -107,11 +114,19 @@ do {
   //Process if no error code is present, else break; !
   **********************************************************/
 
-  if (!isset($json->errors)) {
+  if (!isset($json['errors'])) 
+  {
+
+    if ($guard==0)
+    { 
+      $cache = $json['search_metadata']['refresh_url'];
+      var_dump($cache);
+    }
+    $guard+=1;
 
     //DO-WHILE LOOP CONTROL
-    if (isset($json->search_metadata->next_results)) {
-      $API_query = $json->search_metadata->next_results;
+    if (isset($json['search_metadata']['next_results'])) {
+      $API_query = $json['search_metadata']['next_results'];
       }
     else {
       $API_query = NULL;
@@ -131,63 +146,47 @@ do {
 
     //process them
     
-    /*
-     * API v1.1 start
-     */
-
-    if (isset($json['search_metadata']['count'])) {
-      $counteras = count($json['statuses']);
-    }
-    else {
-      echo "<br />ERROR<br /> couldnt find results? <br />";
-      break;
-    }
+ 
     
-    /*
-     * STUPID API v1.1 end
-     */    
-    
-    foreach ($json['statuses'] as $tweet) {
+    foreach ($json['statuses'] as $tweet) 
+    {
       //for ($i=0; $i<$counteras; $i++){    
-      echo "<br />**********************************************<br />**********************************************<br />";
-      echo $json[$i]->id;
-      echo "<br />**********************************************<br />**********************************************<br />";
-        $datetime = $json['statuses'][$i]->created_at;
+      //echo "<br />**********************************************<br />**********************************************<br />";
+      //echo $tweet['id'];
+      //echo "<br />**********************************************<br />**********************************************<br />";
+        $datetime = $tweet['created_at'];
         //$date = date(?M d, Y?, strtotime($datetime));
         //$time = date(?g:ia?, strtotime($datetime));
-        $tweet_text = $json['statuses'][$i]->text;
-        $tweet_ID = $json['statuses'][$i]->id_str;
-        $twitter_account_name = $json['statuses'][$i]->user->screen_name;
-        $twitter_account_ID = $json['statuses'][$i]->user->id_str; //id_string because of large numbers
-        //adding some regular expressions for linguistic logic		+ DEBUG OUTPUT		
-        //Seems to working, just monitor to verify	
+        $tweet_text = $tweet['text'];
+        $tweet_ID = $tweet['id_str'];
+        $twitter_account_name = $tweet['user']['screen_name'];
+        $twitter_account_ID = $tweet['user']['id_str']; //id_string giati polu megala noumera
         $stripped_tweet = preg_replace('/(#|@)\S+|(RT:)|(RT)/', '', $tweet_text); // remove hashtags
         $stripped_tweet = preg_replace('#\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))#', '', $stripped_tweet);
         //WORKING //   $stripped_tweet = preg_replace('/(RT)|(^|\s)@\S+/', '', $tweet_text); // remove @mentions AND "RT"
       
-        if ($json[$i]->geo != NULL){
+        if (isset($json['geo'])){
           echo "geolocation found </br>";
-          $geo_tweet_location_lat = $json['statuses'][$i]['geo']['coordinates']['0'];
-          $geo_tweet_location_long = $json['statuses'][$i]['geo']['coordinates']['1'];
+          $geo_tweet_location_lat = $tweet['geo']['coordinates']['0'];
+          $geo_tweet_location_long = $tweet['geo']['coordinates']['1'];
         }
         else {
           echo "geolocation did not found,location search";
-          //just to be safe urlencode? nope this version
-          $url2="https://api.twitter.com/1/users/lookup.json?user_id="."$twitter_account_ID";
-          $data2 = file_get_contents($url2);
-          $json2 = json_decode($data2,true);
-          //$geoless_tweet_location now includes "location" field from user/lookup
+          /********************************************/
+          //user is returned in results //
+          /********************************************/
+          
+          //$geoless_tweet_location now contains "location" field from user/lookup function, 
           //some sanitization must be added because location can be "Hello Kitty world", "Heaven", etc
-          $geoless_tweet_location = $json2['0']['location'];
+          $geoless_tweet_location = $tweet['user']['location'];
         }
 
-        /*DEBUG DEBUG DEBUG*/
         
         echo "</br>";
-        echo " O  $twitter_account_name (Me ID:$twitter_account_ID) EIPE : $tweet_text </br> Stis: $datetime";
-      
-        if ($json[$i]->geo != NULL) {
-          echo "Apo location me suntetagmenes: ".'<a href="//maps.google.com/maps?q='.$geo_tweet_location_lat.",".$geo_tweet_location_long.'&z=15" target="_blank">'."$geo_tweet_location_lat , $geo_tweet_location_long</a>";  //removed really long line of comment just saying it's OK
+        echo " User:  $twitter_account_name (Me ID:$twitter_account_ID) said : $tweet_text </br> Stis: $datetime";
+        
+        if (isset($json['geo'])) {
+          echo "From location with coords: ".'<a href="//maps.google.com/maps?q='.$geo_tweet_location_lat.",".$geo_tweet_location_long.'&z=15" target="_blank">'."$geo_tweet_location_lat , $geo_tweet_location_long</a>";  //removed really long line of comment just saying it's OK
           echo "</br></br>";
         }
         else {
@@ -199,14 +198,14 @@ do {
           }
           else {
             $result = lookup("$geoless_tweet_location");
-            echo "GEO was empty, location pou tsimphsamer rwtontas account API: $geoless_tweet_location"; 
+            echo "GEO was empty, get location from account API: $geoless_tweet_location"; //do not use null
             //WE Added some more logic
             if ($result == NULL){
-              echo "</br>Rwthsa kai to Google gia to location $geoless_tweet_location, alla den brhke kati to kapsero";
+              echo "</br>Ask Google for location $geoless_tweet_location, nothing found";
             }
             else{
-              echo "</br>To Google leei oti to $geoless_tweet_location, brisketai stis suntetagmenes:" .'<a href="//maps.google.com/maps?q='.$result['latitude'].",".$result['longitude'].'&z=15" target="_blank">'.$result['latitude'].",".$result['longitude']."</a>"; //Tricky shit indeed
-              $aggravated = preg_match ($aggrav_pattern , $tweet_text); // check for aggravation
+              echo "</br>Google replied that $geoless_tweet_location, coords are:" .'<a href="//maps.google.com/maps?q='.$result['latitude'].",".$result['longitude'].'&z=15" target="_blank">'.$result['latitude'].",".$result['longitude']."</a>"; //Tricky shit indeed
+              $aggravated = preg_match ($aggrav_pattern , $tweet_text); // it will be saved so check for aggravation.
               }		
             echo "</br></br>";
           }
@@ -223,9 +222,9 @@ do {
           $unix_time = strtotime($datetime);
           
           if (isset($geo_tweet_location_lat)){
-            mysql_query("INSERT INTO flu_tweets (user_name, user_id, tweet_text, tweet_id, tweet_date, latitude, longitude, aggravation ) 
+            mysql_query("INSERT INTO flu_tweets (user_name, user_id, tweet_text, tweet_id, tweet_date, latitude, longitude, aggravation )
             VALUES ('$twitter_account_name', '$twitter_account_ID', '$stripped_tweet', '$tweet_ID',	'$unix_time', '$geo_tweet_location_lat', '$geo_tweet_location_long', '$aggravated'						
-            )"); 
+            )") or die (mysql_error()); 
             $geo_tweet_location_lat = NULL;
             $geo_tweet_location_long = NULL;
           }
@@ -235,7 +234,7 @@ do {
             $array_long = $result['longitude'];
             mysql_query("INSERT INTO flu_tweets (user_name, user_id, tweet_text, tweet_id, tweet_date, latitude, longitude, aggravation ) 
             VALUES ('$twitter_account_name', '$twitter_account_ID', '$stripped_tweet', '$tweet_ID',	'$unix_time', '$array_lat', '$array_long', '$aggravated'						
-            )"); 
+            )") or die (mysql_error()); 
             $result = NULL;
           }
         }
@@ -253,17 +252,24 @@ do {
     $we_have_errors = TRUE; 									//Apopriate actions if error code is present
     break;  													//  (skipping storing the cache refresh url)
     }
-} while (0>1);
-//while ($API_query!=NULL);
+} while ($API_query!=NULL);
+
 /************************
 //DO-WHILE LOOP END
 ************************/
 
 
 if (!isset($we_have_errors)){
-  $cache = $json['search_metadata']['refresh_url'];
+  //$cache = $json['search_metadata']['refresh_url'];
+  /*
+   * UGLY FIX***
+   */
+  //$cache = $guarded_cache_url;
   mysql_query("UPDATE flu_engine SET cache_url='$cache'"); //SAVE the refresh url
 }
+
+
+// city returned, call function in order to find coords. 
 
 function lookup($string){ 
   $string = str_replace (" ", "+", urlencode($string));
@@ -287,9 +293,9 @@ function lookup($string){
   return $array;
 }
  
-//$city = 'thessaloniki'; // if city thesniki working check 
-//$array = lookup($city); 
-//print_r($array);
+//Just before exit do the JSON magic
+ include('gennhtriajson.php');
 
-mysql_close($link);
+//close the database connection
+	mysql_close($link);
 ?>
