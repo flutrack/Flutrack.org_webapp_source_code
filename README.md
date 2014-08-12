@@ -1,91 +1,91 @@
 Flutrack.org
 ============
 
-Οδηγίες εγκατάστασης
+Installation Guide
 ============
 
-Αρχικά πρέπει να εκτελεστεί το αρχείο db.php μέσω ενός browser, ώστε να δημιουργηθούν οι πίνακες με τα πεδία στη βάση δεδομένων. 
-Προϋπόθεση είναι να υπάρχει κάποιο Apache distribution που περιέχει MySQL και PHP (προτείνεται ως η πιο απλή λύση και όχι ως μοναδική).
+Firstly, the db.php file must be executed via a browser, in order for the table fields to be created in the data base. An Apache Distribution containing MySQL and PHP 
+should exist (proposed as the simplest solution but not unique).
 
-Αμέσως μετά και ενώ δεν έχει εμφανιστεί κάποιο error καλείτε το http://127.0.0.1/φακελος-εφαρμογης/db.php?secretinstall=secretpassword-που εχετε βαλει στο db.php
+Secondly, and while no error has occurred, call http://127.0.0.1/application_folder/db.php?secretinstall=your_db.php_secret_password.
 
-
-Έπειτα πρέπει να εκτελεστεί το αρχείο backend.php. Για να γίνει αυτό σωστά πρέπει πρώτα να αντικατασταθούν οι αστερίσκοι στο αρχείο
-auth.php. Η αντικατάσταση πρέπει να γίνει με τα κλειδιά που παρέχει το API του Twitter (https://dev.twitter.com/docs/auth/application-only-auth). 
-Κάθε πιθανός χρήστης θα πρέπει να δημιουργήσει μια εφαρμογή στο API του Twitter ώστε να πάρει τα αντίστοιχα κλειδιά.
-
-
-Το αρχείο results.json αποτελεί ένα ενδεικτικό παράδειγμα αρχείου οπτικοποίησης για το front-end τμήμα, όπως αυτό εξάγεται από τη βάση δεδομένων.
-Μπορεί να χρησιμοποιηθεί από το index.html για να οπτικοποιήσει τα tweets. Ο χάρτης στο index.html δεν θα δείξει τίποτα καθώς 
-λείπουν τα εικονίδια που θα αναπαραστούν τα Tweets. Δημιουργείστε ένα φάκελο images και μέσα βάλτε 2 εικονίδια της αρεσκίας σας (http://mapicons.nicolasmollet.com/) 
+Now the backend.php file must be executed. To properly achieve that, the asterisks in the auth.php file should be replaced with the keys included in the 
+Twitter API (https://dev.twitter.com/docs/auth/application-only-auth). Each potential user should create an application in Twitter API, to get the corresponding 
+keys.
 
 
-Τα αρχεία gennaw.php, gennhtriajson.php χρησιμοποιούνται για να εξάγουν τα αρχεία json από τη βάση δεδομένων και αρχικά δεν έχουν καμία χρησιμότητα.
-Πρέπει να τονιστεί ότι τα tweets μπορούν να εξαχθούν από τη βάση με πολλούς άλλους τρόπους (π.χ. xml).
+The results.json file is an illustrative example of a visualisation file for the front-end section, as exported (or extracted) from the data base. It can be used
+through index.html to visualise tweets. The map in index.html will not display something as long as the images representing tweets do not exist. A folder 
+containing 2 images of choice should be created (http://mapicons.nicolasmollet.com/).
 
-Στο αρχείο style.css μπορούν να αλλάξουν οι διαστάσεις του χάρτη και από το αρχείο map.js μπορεί να γίνει η παραμετροποίησή του. Εκεί πρέπει να αλλαχτούν και τα ονόματα
-των markers, που θα οπτικοποιούν τα tweets, ανάλογα με τις εικόνες που θα χρησιμοποιηθούν. Μπορεί ακόμα να γίνει η διαμόρφωση των παραμέτρων
-του χάρτη και ποιων χαρακτηριστικών θα εμφανίζονται (ή όχι).
+The gennaw.php, gennhtriajson.php files are used to export the json files from the data base and do not have any primary use. It should be noted that tweets may 
+be exported from the data base in multiple ways (e.g. xml).
 
-ΠΡΟΣΟΧΗ:
+Accessing styles.css file, the values of the map dimension may change, and within map.js file the map may be parameterized. This is where the markers names should
+be changed and tweets will be visualised, depending on the images to be used. It is also possible for the map parameters to be customized and characteristics to 
+be enabled/disabled.
 
-Στη σελίδα που δημιουργείτε account στο twitter για να πάρετε τα credentials, πρέπει να προσθέσετε ως website/application-url, to url του localhost. Δηλαδή http://127.0.0.1 .Μόνο έτσι θα μπορεί η εφαρμογή σας να συνδέεται στον server του Twitter.
+ATTENTION:
 
-Για να δουλέψει η εφαρμογή τα παρακάτω πρέπει να είναι ενεργοποιημένα και να υποστηρίζονται από τον localhost server. *
- 
-[PHP Modules]
-apc,
-bcmath,
-bz2,
-calendar,
-Core,
-ctype,
-curl,
-date,
-dba,
-dom,
-ereg,
-exif,
-fileinfo,
-filter,
-ftp,
-gd,
-gettext,
-hash,
-iconv,
-json,
-libxml,
-mbstring,
-mhash,
-mysql,
-mysqli,
-mysqlnd,
-openssl,
-pcntl,
-pcre,
-PDO,
-pdo_mysql,
-Phar,
-posix,
-readline,
-Reflection,
-session,
-shmop,
-SimpleXML,
-soap,
-sockets,
-SPL,
-standard,
-suhosin,
-sysvmsg,
-sysvsem,
-sysvshm,
-tokenizer,
-wddx,
-xml,
-xmlreader,
-xmlwriter,
-zip,
+On the page where you created your twitter account to get the credentials, you should add as website/application-url, the url of the localhost, 
+i.e. http://127.0.0.1 . This is the only way for your application to be able to connect to the Twitter server. 
+
+For the application to work, the following must be activated and supported by the localhost server:
+[PHP Modules] 
+apc, 
+bcmath, 
+bz2, 
+calendar, 
+Core, 
+ctype, 
+curl, 
+date, 
+dba, 
+dom, 
+ereg, 
+exif, 
+fileinfo, 
+filter, 
+ftp, 
+gd, 
+gettext, 
+hash, 
+iconv, 
+json, 
+libxml, 
+mbstring, 
+mhash, 
+mysql, 
+mysqli, 
+mysqlnd, 
+openssl, 
+pcntl, 
+pcre, 
+PDO, 
+pdo_mysql, 
+Phar, 
+posix, 
+readline, 
+Reflection, 
+session, 
+shmop, 
+SimpleXML, 
+soap, 
+sockets, 
+SPL, 
+standard, 
+suhosin, 
+sysvmsg, 
+sysvsem, 
+sysvshm, 
+tokenizer, 
+wddx, 
+xml, 
+xmlreader, 
+xmlwriter, 
+zip, 
 zlib
+
+For any questions or suggestions, please contact: flutrack.org@gmail.com
 
 Για οποιαδήποτε ερώτηση, προβληματισμό ή ιδέα επικοινωνήστε στο: sckarolos@yahoo.com
