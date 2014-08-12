@@ -88,4 +88,3 @@ zlib
 
 For any questions or suggestions, please contact: flutrack.org@gmail.com
 
-Για οποιαδήποτε ερώτηση, προβληματισμό ή ιδέα επικοινωνήστε στο: sckarolos@yahoo.com
