@@ -160,7 +160,7 @@ do {
         $tweet_text = $tweet['text'];
         $tweet_ID = $tweet['id_str'];
         $twitter_account_name = $tweet['user']['screen_name'];
-        $twitter_account_ID = $tweet['user']['id_str']; //id_string giati polu megala noumera
+        $twitter_account_ID = $tweet['user']['id_str']; //id_string because the number are really big
         $stripped_tweet = preg_replace('/(#|@)\S+|(RT:)|(RT)/', '', $tweet_text); // remove hashtags
         $stripped_tweet = preg_replace('#\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))#', '', $stripped_tweet);
         //WORKING //   $stripped_tweet = preg_replace('/(RT)|(^|\s)@\S+/', '', $tweet_text); // remove @mentions AND "RT"
