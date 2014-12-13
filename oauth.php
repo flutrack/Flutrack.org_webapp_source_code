@@ -38,5 +38,19 @@ $http_code = $info['http_code'];
 $json = json_decode($result);
 $token = $json->access_token;
 
+if ($http_code == 200){ //TO-DO: Error handling
+  if ($json->token_type == "bearer"){
+   mysql_query("UPDATE flu_engine SET bearer_token='$token'");
+//   echo "DEBUG: we successfully acquired or have already valid bearer token<br />";
+//   echo "DEBUG: this was: $token<br />";
+  }
+  else {
+    echo "ERROR: token type not bearer";
+  }
+}
+else {
+  echo "ERROR :something went wrong";
+}
 
-?> 
+curl_close($ch); 
+?>
