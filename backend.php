@@ -294,7 +294,7 @@ function lookup($string){
 }
  
 //Just before exit do the JSON magic
- include('gennhtriajson.php');
+ include('genjson.php');
 
 //close the database connection
 	mysql_close($link);
