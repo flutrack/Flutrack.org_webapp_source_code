@@ -46,7 +46,8 @@ if (isset( $_GET['secretinstall'])) {
 			tweet_id BIGINT UNSIGNED,
 			tweet_date INT UNSIGNED,
 			latitude DECIMAL(10,6) NOT NULL,
-			longitude DECIMAL(10,6) NOT NULL
+			longitude DECIMAL(10,6) NOT NULL,
+			aggravation TINYINT UNSIGNED
 			)
 		ENGINE = MYISAM";
 		mysql_query($query);
