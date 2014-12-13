@@ -4,7 +4,7 @@
 
   var fluIcons = []; // marker table 
   fluIcons['0'] = new google.maps.MarkerImage( // common marker initialization
-    'images/test1.png', 
+    'images/test1.svg', 
     new google.maps.Size(48, 48), 
     null, 
     new google.maps.Point(24, 24)
