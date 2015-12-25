@@ -1,6 +1,6 @@
 <?php
 
-require('config.php')
+require('config.php');
 
 // url encode the consumer_key and consumer_secret in accordance with RFC 1738
 $encoded_consumer_key = urlencode($consumer_key);
