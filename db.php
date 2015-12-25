@@ -1,12 +1,6 @@
 <?php
-/**********************************************
-***	import CONFIG MySQL user/pass/db_name	***
-***   to set or change edit: db-config.php  ***
-***********************************************/
-$db_user="********";
-$db_pass="**********************";
-$db_name = '********************';
-$correct_secret_word = "*********************";
+
+require('config.php');
 /**********************************************
 ***					END OF					***
 *** import CONFIG MySQL user/pass/db_name	***
